@@ -2,8 +2,7 @@ var thrift = require('thrift');
 var Calculator = require('./gen-nodejs/Calculator');
 var ttypes = require('./gen-nodejs/tutorial_types');
 var JSCustomConnection = require("./JSCustomConnection").JSCustomConnection;
-var IOSCustomReader = require("./IOSCustomReader").IOSCustomReader;
-var IOSCustomWriter = require("./IOSCustomWriter").IOSCustomWriter;
+var IOSCustomTransport = require("./IOSCustomTransport").IOSCustomTransport;
 var JSCustomTransport = require("./JSCustomTransport").JSCustomTransport;
 
 // Shared protocol
@@ -29,8 +28,7 @@ var processor = new Calculator.Processor({
 
 function receiveMessageIOS(buf) {
   console.log("[iOS] Receive Message")
-  // probably shouldn't create a new protocol and transport every time
-  processor.process(new protocol(new IOSCustomReader(buf), ""), new protocol(new IOSCustomWriter(receiveMessageJS)))
+  processor.process(new protocol(new IOSCustomTransport(buf)), new protocol(new IOSCustomTransport(null, receiveMessageJS)))
 }
 
 // ----- JS side

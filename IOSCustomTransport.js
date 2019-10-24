@@ -1,24 +1,34 @@
 var binary = require('./node_modules/thrift/lib/nodejs/lib/thrift/binary');
 
-exports.IOSCustomReader = IOSCustomReader;
+exports.IOSCustomTransport = IOSCustomTransport;
 
-function IOSCustomReader(readBuffer, writeCb) {
+function IOSCustomTransport(readBuffer, writeCb) {
+  console.log("[iOS] New IOSCustomTransport")
   this.writeCb = writeCb;
+  this.buffers = [];
   this.inBuf = readBuffer;
   this.readCursor = 0;
-  console.log("[iOS] New transport")
 };
 
-IOSCustomReader.prototype.write = function(buf, foo) {
-  console.log("[iOS] Transport write")
-  this.writeCb(buf, 1)
+IOSCustomTransport.prototype.write = function(buf, foo) {
+  console.log("[iOS] Writer write")
+  if (typeof(buf) === "string") {
+    buf = new Buffer(buf, 'utf8');
+  }
+  this.buffers.push(buf);
 }
 
-IOSCustomReader.prototype.flush = function() {
-  console.log("[iOS] Transport flush")
+IOSCustomTransport.prototype.flush = function() {
+  console.log("[iOS] Writer flush")
+  this.writeCb(Buffer.concat(this.buffers))
+  this.buffers = []
 }
 
-IOSCustomReader.prototype.borrow = function() {
+IOSCustomTransport.prototype.setCurrSeqId = function (id) {
+  // todo
+}
+
+IOSCustomTransport.prototype.borrow = function() {
   var cursor = this.readCursor;
   return {
     buf: this.inBuf,
@@ -27,44 +37,44 @@ IOSCustomReader.prototype.borrow = function() {
   };
 }
 
-IOSCustomReader.prototype.ensureAvailable = function(len) {
+IOSCustomTransport.prototype.ensureAvailable = function(len) {
   if (this.readCursor + len > this.inBuf.length) {
     throw("new InputBufferUnderrunError();");
   }
 };
 
-IOSCustomReader.prototype.consume = function(bytesConsumed) {
+IOSCustomTransport.prototype.consume = function(bytesConsumed) {
   this.readCursor += bytesConsumed;
 };
 
 
-IOSCustomReader.prototype.readByte = function() {
+IOSCustomTransport.prototype.readByte = function() {
   this.ensureAvailable(1);
   return binary.readByte(this.inBuf[this.readCursor++]);
 };
 
-IOSCustomReader.prototype.readI16 = function() {
+IOSCustomTransport.prototype.readI16 = function() {
   this.ensureAvailable(2);
   var i16 = binary.readI16(this.inBuf, this.readCursor);
   this.readCursor += 2;
   return i16;
 };
 
-IOSCustomReader.prototype.readI32 = function() {
+IOSCustomTransport.prototype.readI32 = function() {
   this.ensureAvailable(4);
   var i32 = binary.readI32(this.inBuf, this.readCursor);
   this.readCursor += 4;
   return i32;
 };
 
-IOSCustomReader.prototype.readDouble = function() {
+IOSCustomTransport.prototype.readDouble = function() {
   this.ensureAvailable(8);
   var d = binary.readDouble(this.inBuf, this.readCursor);
   this.readCursor += 8;
   return d;
 };
 
-IOSCustomReader.prototype.readString = function(len) {
+IOSCustomTransport.prototype.readString = function(len) {
   this.ensureAvailable(len);
   var str = this.inBuf.toString('utf8', this.readCursor, this.readCursor + len);
   this.readCursor += len;
