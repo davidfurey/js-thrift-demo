@@ -2,9 +2,6 @@ var binary = require('./node_modules/thrift/lib/nodejs/lib/thrift/binary');
 
 exports.JSCustomReader = JSCustomReader;
 
-// var writeCb = function(buf, seqid) {
-//   connection.write(buf, seqid);
-// };
 function JSCustomReader(readBuffer, writeCb) {
   this.writeCb = writeCb;
   this.inBuf = readBuffer;
@@ -30,19 +27,12 @@ JSCustomReader.prototype.borrow = function() {
   };
 }
 
-JSCustomReader.prototype.consume = function(bytesConsumed) {
-  this.readCursor += bytesConsumed;
-};
-
 JSCustomReader.prototype.commitPosition = function() {
   // todo
 }
 
 JSCustomReader.prototype.ensureAvailable = function(len) {
   if (this.readCursor + len > this.inBuf.length) {
-    console.log(len)
-    console.log(this.readCursor)
-    console.log(this.inBuf.length)
     throw("new InputBufferUnderrunError();");
   }
 };
