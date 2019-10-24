@@ -1,9 +1,5 @@
-
 exports.IOSCustomWriter = IOSCustomWriter;
 
-// var writeCb = function(buf, seqid) {
-//   connection.write(buf, seqid);
-// };
 function IOSCustomWriter(receiveMessageJS) {
   console.log("[iOS] New IOS Writer")
   this.receiveMessageJS = receiveMessageJS
