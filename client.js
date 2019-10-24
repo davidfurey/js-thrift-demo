@@ -46,22 +46,22 @@ function receiveMessageJS(buf) {
 var client = thrift.createClient(Calculator, connection);
 
 console.log("Try ping");
-client.ping(function(err, response) {
+client.ping().then(function(response) {
   console.log('ping()');
 });
 
 console.log("Try 1+1");
-client.add(1,1, function(err, response) {
+client.add(1,1).then(function(response) {
   console.log("1+1=" + response);
 });
 
 console.log("Try 2+1");
-client.add(2,1, function(err, response) {
+client.add(2,1).then(function(response) {
   console.log("2+1=" + response);
 });
 
-console.log("Try 1+1");
-client.add(3,1, function(err, response) {
+console.log("Try 3+1");
+client.add(3,1).then(function(response) {
   console.log("3+1=" + response);
 });
 
