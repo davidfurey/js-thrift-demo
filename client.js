@@ -12,7 +12,7 @@ var protocol = thrift.TBinaryProtocol
 // --- "iOS" side
 var handler = {
   ping: function(result) {
-    console.log("ping()");
+    console.log("[SERVER] ping()");
     setTimeout(() => {
         result(null);
     }, 1000);
@@ -47,7 +47,7 @@ var client = thrift.createClient(Calculator, connection);
 
 console.log("Try ping");
 client.ping().then(function(response) {
-  console.log('ping()');
+  console.log('[CLIENT] ping()');
 });
 
 console.log("Try 1+1");
