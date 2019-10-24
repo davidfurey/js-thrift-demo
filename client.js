@@ -8,6 +8,10 @@ var IOSCustomWriter = require("./IOSCustomWriter").IOSCustomWriter;
 var JSCustomReader = require("./JSCustomReader").JSCustomReader;
 var SharedStruct = require("./gen-nodejs/shared_types").SharedStruct;
 
+// Shared protocol
+var protocol = thrift.TJSONProtocol
+//var protocol = thrift.TBinaryProtocol
+
 // --- "iOS" side
 var data = {};
 
@@ -76,16 +80,13 @@ var processor = new Calculator.Processor({
 function receiveMessageIOS(buf) {
   console.log("[iOS] Receive Message")
   // probably shouldn't create a new protocol and transport every time
-  var protocol = thrift.TJSONProtocol
-  //var protocol = thrift.TBinaryProtocol
   processor.process(new protocol(new IOSCustomReader(buf), ""), new protocol(new IOSCustomWriter(receiveMessageJS)))
 }
 
 
 // ----- JS side
 
-//var connection = new JSCustomConnection({ protocol: thrift.TBinaryProtocol}, receiveMessageIOS);
-var connection = new JSCustomConnection({ protocol: thrift.TJSONProtocol}, receiveMessageIOS);
+var connection = new JSCustomConnection({ protocol: protocol}, receiveMessageIOS);
 
 function receiveMessageJS(buf) {
   console.log("[JS] Receive Message");
