@@ -24,7 +24,7 @@ var processor = new Calculator.Processor({
     //result(null, n1 + n2);
     setTimeout(() => {
         result(null, n1 + n2);
-    }, 500);
+    }, 500 * Math.random());
   },
 
   calculate: function(logid, work, result) {
@@ -76,16 +76,16 @@ var processor = new Calculator.Processor({
 function receiveMessageIOS(buf) {
   console.log("[iOS] Receive Message")
   // probably shouldn't create a new protocol and transport every time
-  //var protocol = thrift.TJSONProtocol
-  var protocol = thrift.TBinaryProtocol
+  var protocol = thrift.TJSONProtocol
+  //var protocol = thrift.TBinaryProtocol
   processor.process(new protocol(new IOSCustomReader(buf), ""), new protocol(new IOSCustomWriter(receiveMessageJS)))
 }
 
 
 // ----- JS side
 
-var connection = new JSCustomConnection({ protocol: thrift.TBinaryProtocol}, receiveMessageIOS);
-//var connection = new JSCustomConnection({ protocol: thrift.TJSONProtocol}, receiveMessageIOS);
+//var connection = new JSCustomConnection({ protocol: thrift.TBinaryProtocol}, receiveMessageIOS);
+var connection = new JSCustomConnection({ protocol: thrift.TJSONProtocol}, receiveMessageIOS);
 
 function receiveMessageJS(buf) {
   console.log("[JS] Receive Message");
@@ -107,34 +107,48 @@ client.add(1,1, function(err, response) {
   console.log("1+1=" + response);
 });
 
-
-work = new ttypes.Work();
-work.op = ttypes.Operation.DIVIDE;
-work.num1 = 1;
-work.num2 = 0;
-
-client.calculate(1, work, function(err, message) {
-  if (err) {
-    console.log("InvalidOperation " + err);
-  } else {
-    console.log('Whoa? You know how to divide by zero?');
-  }
+console.log("Try 2+1");
+client.add(2,1, function(err, response) {
+  console.log("2+1=" + response);
 });
 
-work.op = ttypes.Operation.SUBTRACT;
-work.num1 = 15;
-work.num2 = 10;
-
-client.calculate(1, work, function(err, message) {
-  console.log('15-10=' + message);
-
-  client.getStruct(1, function(err, message){
-    console.log('Check log: ' + message.value);
-
-    //close the connection once we're done
-    setTimeout(() => {
-        console.log("DONE")
-        connection.end();
-    }, 5000);
-  });
+console.log("Try 1+1");
+client.add(3,1, function(err, response) {
+  console.log("3+1=" + response);
 });
+
+
+// work = new ttypes.Work();
+// work.op = ttypes.Operation.DIVIDE;
+// work.num1 = 1;
+// work.num2 = 0;
+//
+// client.calculate(1, work, function(err, message) {
+//   if (err) {
+//     console.log("InvalidOperation " + err);
+//   } else {
+//     console.log('Whoa? You know how to divide by zero?');
+//   }
+// });
+//
+// work.op = ttypes.Operation.SUBTRACT;
+// work.num1 = 15;
+// work.num2 = 10;
+//
+// client.calculate(1, work, function(err, message) {
+//   console.log('15-10=' + message);
+//
+//   client.getStruct(1, function(err, message){
+//     console.log('Check log: ' + message.value);
+//
+//     //close the connection once we're done
+//     setTimeout(() => {
+//         console.log("DONE")
+//         connection.end();
+//     }, 5000);
+//   });
+// });
+setTimeout(() => {
+    console.log("DONE")
+    connection.end();
+}, 5000);

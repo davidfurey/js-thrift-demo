@@ -13,6 +13,9 @@ function IOSCustomWriter(receiveMessageJS) {
 
 IOSCustomWriter.prototype.write = function(buf, foo) {
   console.log("[iOS] Writer write")
+  if (typeof(buf) === "string") {
+    buf = new Buffer(buf, 'utf8');
+  }
   this.buffers.push(buf);
 }
 
