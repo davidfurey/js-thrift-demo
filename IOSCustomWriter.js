@@ -1,9 +1,8 @@
 exports.IOSCustomWriter = IOSCustomWriter;
 
-function IOSCustomWriter(receiveMessageJS) {
-  console.log("[iOS] New IOS Writer")
-  this.receiveMessageJS = receiveMessageJS
-  this.writeBuf = null
+function IOSCustomWriter(writeCb) {
+  console.log("[iOS] New IOSCustomWriter")
+  this.writeCb = writeCb
   this.buffers = [];
 };
 
@@ -17,7 +16,7 @@ IOSCustomWriter.prototype.write = function(buf, foo) {
 
 IOSCustomWriter.prototype.flush = function() {
   console.log("[iOS] Writer flush")
-  this.receiveMessageJS(Buffer.concat(this.buffers))
+  this.writeCb(Buffer.concat(this.buffers))
   this.buffers = []
 }
 
