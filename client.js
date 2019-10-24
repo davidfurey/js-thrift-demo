@@ -2,15 +2,15 @@ var thrift = require('thrift');
 var Calculator = require('./gen-nodejs/Calculator');
 var ttypes = require('./gen-nodejs/tutorial_types');
 var JSCustomConnection = require("./JSCustomConnection").JSCustomConnection;
-var IOSCustomTransport = require("./IOSCustomTransport").IOSCustomTransport;
 var JSCustomTransport = require("./JSCustomTransport").JSCustomTransport;
+var IOSCustomServer = require("./IOSCustomServer").IOSCustomServer;
 
 // Shared protocol
 var protocol = thrift.TJSONProtocol
 //var protocol = thrift.TBinaryProtocol
 
 // --- "iOS" side
-var processor = new Calculator.Processor({
+var handler = {
   ping: function(result) {
     console.log("ping()");
     setTimeout(() => {
@@ -24,11 +24,13 @@ var processor = new Calculator.Processor({
         result(null, n1 + n2);
     }, 500 * Math.random());
   },
-});
+};
+
+var server = new IOSCustomServer(Calculator, handler, receiveMessageJS, options = { protocol: protocol })
 
 function receiveMessageIOS(buf) {
   console.log("[iOS] Receive Message")
-  processor.process(new protocol(new IOSCustomTransport(buf)), new protocol(new IOSCustomTransport(null, receiveMessageJS)))
+  server.receiveMessage(buf)
 }
 
 // ----- JS side
