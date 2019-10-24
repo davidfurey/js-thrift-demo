@@ -2,9 +2,6 @@ var binary = require('./node_modules/thrift/lib/nodejs/lib/thrift/binary');
 
 exports.IOSCustomReader = IOSCustomReader;
 
-// var writeCb = function(buf, seqid) {
-//   connection.write(buf, seqid);
-// };
 function IOSCustomReader(readBuffer, writeCb) {
   this.writeCb = writeCb;
   this.inBuf = readBuffer;
