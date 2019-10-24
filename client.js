@@ -6,8 +6,8 @@ var JSCustomTransport = require("./JSCustomTransport").JSCustomTransport;
 var IOSCustomServer = require("./IOSCustomServer").IOSCustomServer;
 
 // Shared protocol
-var protocol = thrift.TJSONProtocol
-//var protocol = thrift.TBinaryProtocol
+//var protocol = thrift.TJSONProtocol
+var protocol = thrift.TBinaryProtocol
 
 // --- "iOS" side
 var handler = {
