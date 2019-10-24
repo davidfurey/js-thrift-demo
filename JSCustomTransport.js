@@ -12,12 +12,15 @@ function JSCustomTransport(readBuffer, writeCb) {
 
 JSCustomTransport.prototype.write = function(buf, foo) {
   console.log("[JS] Writer write")
-  this.buffers.push(new Buffer(buf));
+  if (typeof(buf) === "string") {
+    buf = new Buffer(buf, 'utf8');
+  }
+  this.buffers.push(buf);
 }
 
 JSCustomTransport.prototype.flush = function() {
   console.log("[JS] Writer flush")
-  this.writeCb(Buffer.concat(this.buffers), 1)
+  this.writeCb(Buffer.concat(this.buffers))
   this.buffers = []
 }
 
