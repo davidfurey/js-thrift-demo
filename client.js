@@ -4,7 +4,7 @@ var ttypes = require('./gen-nodejs/tutorial_types');
 var JSCustomConnection = require("./JSCustomConnection").JSCustomConnection;
 var IOSCustomReader = require("./IOSCustomReader").IOSCustomReader;
 var IOSCustomWriter = require("./IOSCustomWriter").IOSCustomWriter;
-var JSCustomReader = require("./JSCustomReader").JSCustomReader;
+var JSCustomTransport = require("./JSCustomTransport").JSCustomTransport;
 
 // Shared protocol
 var protocol = thrift.TJSONProtocol
@@ -21,7 +21,6 @@ var processor = new Calculator.Processor({
 
   add: function(n1, n2, result) {
     console.log("add(", n1, ",", n2, ")");
-    //result(null, n1 + n2);
     setTimeout(() => {
         result(null, n1 + n2);
     }, 500 * Math.random());
@@ -34,25 +33,22 @@ function receiveMessageIOS(buf) {
   processor.process(new protocol(new IOSCustomReader(buf), ""), new protocol(new IOSCustomWriter(receiveMessageJS)))
 }
 
-
 // ----- JS side
 
 var connection = new JSCustomConnection({ protocol: protocol}, receiveMessageIOS);
 
 function receiveMessageJS(buf) {
   console.log("[JS] Receive Message");
-  connection.rxMessage(new JSCustomReader(new Buffer(buf)));
+  connection.rxMessage(new JSCustomTransport(new Buffer(buf)));
 }
 
 
 var client = thrift.createClient(Calculator, connection);
 
-
 console.log("Try ping");
 client.ping(function(err, response) {
   console.log('ping()');
 });
-
 
 console.log("Try 1+1");
 client.add(1,1, function(err, response) {

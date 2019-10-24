@@ -1,12 +1,12 @@
 var EventEmitter = require("events").EventEmitter;
 var thrift = require('thrift');
 
-var JSCustomWriter = require("./JSCustomWriter").JSCustomWriter;
+var JSCustomTransport = require("./JSCustomTransport").JSCustomTransport;
 
 exports.JSCustomConnection = JSCustomConnection;
 
 function JSCustomConnection(options = {}, iosFunction) {
-  this.transport = options.transport || JSCustomWriter;
+  this.transport = options.transport || JSCustomTransport;
   this.protocol = options.protocol || thrift.TJSONProtocol;
   this.iosFunction = iosFunction;
   this.client = null;
